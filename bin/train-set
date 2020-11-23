@@ -1,0 +1,87 @@
+#!/usr/bin/env python3
+#
+# pylint: disable=invalid-name, redefined-outer-name
+"""
+Create a random train-set for timing/benchmarking basic/core vw
+"""
+import os
+import sys
+import re
+import random
+import signal
+
+ARGV0 = os.path.basename(sys.argv[0])
+
+# Default for number of examples & input features
+NROWS = 500000
+NCOLS = 20
+
+def err(msg):
+    """Raw write to stderr"""
+    sys.stderr.write(msg)
+
+def out(msg):
+    """Raw write to stdout"""
+    sys.stdout.write(msg)
+
+def die(msg):
+    """Print error message and exit"""
+    sys.stderr.write(msg)
+    sys.exit(1)
+
+def usage(msg):
+    """Print usage message and exit"""
+    err(msg)
+    die("Usage: %s [rows [cols]]" % ARGV0)
+
+def get_args():
+    """Get args from command line"""
+    rows, cols = 0, 0
+    for arg in sys.argv:
+        if re.match(r'^\d+$', arg):
+            if not rows:
+                rows = int(arg)
+            elif not cols:
+                cols = int(arg)
+            else:
+                usage("expecting maximum of 2 numeric args <nrows> <ncols>")
+
+    if not rows:
+        rows = NROWS
+
+    if not cols:
+        cols = NCOLS
+
+    return rows, cols
+
+def create_training_set(nrows: int, ncols: int = NCOLS):
+    """
+    Create a random training-set with:
+        nrows examples
+        ncols features
+    """
+    def create_example(rowno: int, ncols: int = ncols):
+        """Create a single example"""
+        input_features = []
+        sumj = 0.0
+        for j in range(ncols):
+            feature_name = 'f%d' % j
+            feature_value = random.uniform(-1, 1)
+            feature = '%s:%.5f' % (feature_name, feature_value)
+            input_features.append(feature)
+            sumj += feature_value * j
+
+        inputs = ' '.join(input_features)
+        example = '%.5f 1 ex%s|%s %s' % (sumj, rowno, 'NSpc', inputs)
+        return example
+
+    for i in range(nrows):
+        example = create_example(i, ncols)
+        out("%s\n" % example)
+
+if __name__ == '__main__':
+
+    signal.signal(signal.SIGINT, lambda x, y: sys.exit(0))
+
+    nrows, ncols = get_args()
+    create_training_set(nrows=nrows, ncols=ncols)

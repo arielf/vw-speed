@@ -1,0 +1,26 @@
+#!/bin/bash
+#
+# Run:
+#       cmd args...
+# As passed to this wrapper.
+#
+# Capture (user, system, overall) time it took to run & echo it to STDERR
+# with TAB separators
+#
+TIME_FORMAT="%Uu %Ss %e %P"
+
+# Make sure all needed pieces are in the buffer cache:
+for arg in "$@"; do
+    if [[ -e "$arg" ]]; then
+        cat "$arg" > /dev/null
+        cp "$arg" /dev/null
+    fi
+done
+cat /usr/bin/time "$(which perl)" > /dev/null
+
+TIME=$TIME_FORMAT /usr/bin/time "$@" 2>&1 | perl -ne '
+    print STDERR $_;
+    if (/^([\d.]+)u\s+([\d.]+)s\s+([\d.]+)\s+([\d.]+)/o) {
+        print STDOUT "$1\t$2\t$3\t$4\n";
+    }
+'
