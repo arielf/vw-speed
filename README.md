@@ -1,5 +1,26 @@
 # vw-speed
+
 Benchmark &amp; chart vw runtime changes over time
+
+## Overview
+
+This repository allows you to benchmark vw binary versions and compare
+their (learning) run-times over time.
+
+There's a set of (statically linked + optimized) binaries included
+to make it easy to reproduce. The included binaries are all:
+
+    ELF 64-bit LSB executable, x86-64 (Intel/AMD) GNU/Linux
+
+The [Makefile](Makefile) allows you to adjust:
+
+  - The runtime options via `VWOPTS`
+  - The vw binaries used via `VW_BINARIES`
+  - The training-set via `TRAINSET`
+  - The timings log file via `LOGFILE`
+
+The chart gets generated using `R/ggplot` from the `LOGFILE`.
+
 
 ## HOWTO
 
