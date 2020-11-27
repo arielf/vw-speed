@@ -39,6 +39,8 @@ VWOPTS = --loss_function quantile \
 VWBASENAME = $$(basename $$(realpath $(VW)))
 VWCMD = $(VWBASENAME) $(VWOPTS) -d $(TRAINSET)
 
+.PRECIOUS: *.vw *.vw.gz *.log
+
 .ONESHELL:
 
 all: timeall

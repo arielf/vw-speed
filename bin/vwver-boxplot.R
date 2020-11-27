@@ -70,8 +70,8 @@ d = fread(DataFile, select=read.cols, header=TRUE)
 # Convert Command column values to only 1st word (vw-version)
 d$VwVersion = gsub(' .*$', '', d$Command)
 
-min.time = min(d$Time, na.rm=TRUE)
-max.time = max(d$Time, na.rm=TRUE)
+min.time = min(d$Time)
+max.time = max(d$Time)
 
 eprintf("min.time=%s max.time=%s\n", min.time, max.time)
 
