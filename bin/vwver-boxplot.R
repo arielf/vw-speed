@@ -97,8 +97,7 @@ g <- ggplot(d.m, aes(y=value, fill=variable)) +
     ggtitle("Elapsed run-time distributions by VW version") +
     ylab("Runtime (seconds)") +
     scale_x_discrete(labels=versions) +
-    scale_y_continuous(limits=c(min.time, max.time),
-                       breaks=seq(0, max.time, by=0.25)) +
+    scale_y_continuous(limits=c(min.time, max.time)) +
     mytheme()
 
 ggsave(
