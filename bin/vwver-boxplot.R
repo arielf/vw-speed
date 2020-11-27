@@ -7,15 +7,28 @@ library(data.table)
 
 eprintf <- function(...) cat(sprintf(...), sep='', file=stderr())
 ymd     <- function() format(Sys.time(), "%Y-%m-%d")
-argv0 <- sub('\\.R$', '', basename(
-    grep('^--file=', commandArgs(trailingOnly=F), value=T))
-)
-geomSeries <- function(base, max) { base^(0:floor(log(max, base))) }
+Args    <- commandArgs(trailingOnly=F)
+argv0 <- sub('\\.R$', '', basename(grep('^--file=', Args, value=T)))
+argvN   <- Args[length(Args)]
 systemf <- function(...) system(sprintf(...))
 
 Viewer = 'nomacs'
 ChartFile = sprintf("%s.png", argv0)
+
+usage <- function(...) {
+    eprintf(...)
+    eprintf("Usage: %s [datafile.log]\n", argv0)
+    quit()
+}
+
 DataFile = 'timings.log'
+if (endsWith(argvN, '.log')) {
+    if (file.exists(argvN)) {
+        DataFile <- argvN
+    } else {
+        usage("%s does not exist\n", argvN)
+    }
+}
 
 # DPI = 96
 # Higher res looks much better
