@@ -2,7 +2,7 @@
 # Makefile for vw-speed
 #
 SHELL := /bin/bash
-export PATH := ./bin:~/bin:$(PATH)
+export PATH := ./bin:./vw_binaries:$(PATH)
 
 LOGFILE = timings.log
 
