@@ -12,12 +12,16 @@ FEATURES = 10
 TRAINSET = trainset.$(EXAMPLES)-$(FEATURES).vw.gz
 
 #
-# To ensure apples-to-apples comparisons,
+# Ensure apples-to-apples comparisons,
 # e.g. make sure these vw binaries are:
-#	- Fully optimized (production builds)
-#	- Statically linked
-# i.e.:
-#	cmake .. -DSTATIC_LINK_VW=On -DDEFAULT_BUILD_TYPE=Release
+#	- Run on the same system, under similar load conditions
+#	- Binaries are:
+#		- Fully optimized (production builds)
+#		- Statically linked
+# 	  i.e. in the vw source tree build dir:
+#		cmake .. -DSTATIC_LINK_VW=On -DCMAKE_BUILD_TYPE=Release
+#	  followed by a build at the top level:
+#		make vw-bin
 #
 VW_BINARIES = vw_binaries/vw-*
 
@@ -40,7 +44,13 @@ VWCMD = $(VWBASENAME) $(VWOPTS) -d $(TRAINSET)
 all: timeall
 
 trainset $(TRAINSET): bin/train-set
-	bin/train-set $(EXAMPLES) $(FEATURES) | gzip -v > $(TRAINSET)
+	TMP_TRAINSET=trainset.vw
+	bin/train-set $(EXAMPLES) $(FEATURES) > $$TMP_TRAINSET
+	if [[ "$(TRAINSET)" =~ *.gz ]]; then
+		gzip -v  -c $$TMP_TRAINSET > $(TRAINSET)
+	else
+		mv -f $$TMP_TRAINSET $(TRAINSET)
+	fi
 
 train timeone: $(TRAINSET) bin/elapsed-time
 	echo === benchmarking $(VWBASENAME) ...
@@ -54,7 +64,7 @@ bench-all timeall:
 	done
 
 chart:
-	bin/vwver-boxplot.R
+	bin/vwver-boxplot.R $(LOGFILE)
 
 clean:
 	rm *.cache
