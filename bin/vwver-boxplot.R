@@ -36,31 +36,31 @@ DPI = 192
 FONTSIZE = 10
 MyGray = 'grey50'
 
-title.theme   <- element_text(family="FreeSans", face="bold.italic",
+title.theme   <- element_text(family='FreeSans', face='bold.italic',
                             size=FONTSIZE-1, hjust=0.5, vjust=-0.2)
-x.title.theme <- element_text(family="FreeSans", face="bold.italic",
+x.title.theme <- element_text(family='FreeSans', face='bold.italic',
                             size=FONTSIZE-2, hjust=0.5)
-y.title.theme <- element_text(family="FreeSans", face="bold.italic",
+y.title.theme <- element_text(family='FreeSans', face='bold.italic',
                            size=FONTSIZE-2, angle=90)
-x.axis.theme  <- element_text(family="FreeSans", face="bold",
-                            size=FONTSIZE-2, color='black',
+x.axis.theme  <- element_text(family='FreeSans', face='bold',
+                            size=FONTSIZE-2, color='grey40',
                             angle=45, hjust=1, vjust=1)
-y.axis.theme  <- element_text(family="FreeSans", face="bold",
+y.axis.theme  <- element_text(family='FreeSans', face='bold',
                             size=FONTSIZE-2, color=MyGray)
-legend.title  <- element_text(family="FreeSans", face="bold.italic",
-                            size=FONTSIZE-2, color="black")
-legend.text  <- element_text(family="FreeSans", face="bold.italic",
-                            size=FONTSIZE-3, color="black")
+legend.title  <- element_text(family='FreeSans', face='bold.italic',
+                            size=FONTSIZE-2, color='black')
+legend.text  <- element_text(family='FreeSans', face='bold.italic',
+                            size=FONTSIZE-3, color='black')
 
 mytheme <- function() {
         theme(
             plot.title=title.theme,
-            axis.title.y=y.title.theme,
             axis.title.x=x.title.theme,
+            axis.title.y=y.title.theme,
             axis.text.x=x.axis.theme,
             axis.text.y=y.axis.theme,
-            legend.title=element_blank(),
-            legend.text=legend.text
+            legend.text=legend.text,
+            legend.title=element_blank()
         )
 }
 
@@ -79,24 +79,24 @@ d.m <- melt(d, id.vars=c('VwVersion'), measure.vars=c('Time'))
 d.m = d.m[, c('VwVersion', 'value')]
 
 names(d.m) <- c('variable', 'value')
-head(d.m, 20)
+head(d.m, 40)
 
-versions = sort(d.m$VwVersion)
+VwVersions = sort(unique(d.m$variable))
 
-g <- ggplot(d.m, aes(y=value, fill=variable)) +
-    stat_boxplot(geom='errorbar', lwd=0.4, width=1.8,
-                 position=position_dodge(6)) +
+g <- ggplot(d.m, aes(x=variable, y=value, fill=variable)) +
+    stat_boxplot(geom='errorbar', lwd=0.4, width=0.25,
+                  position=position_dodge(2)) +
     geom_boxplot(
                 lwd=0.4,
-                width=4,
-                position=position_dodge(6),
+                width=0.6,
+                position=position_dodge(2),
                 # notch=TRUE,
                 outlier.size=0.12, outlier.shape=19,
-                outlier.color='#555555',
-                na.rm=TRUE) +
+                outlier.color='#555555') +
     ggtitle("Elapsed run-time distributions by VW version") +
+    xlab(NULL) +
+    scale_x_discrete(breaks=VwVersions, labels=VwVersions) +
     ylab("Runtime (seconds)") +
-    scale_x_discrete(labels=versions) +
     scale_y_continuous(limits=c(min.time, max.time)) +
     mytheme()
 
