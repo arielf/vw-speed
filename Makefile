@@ -9,7 +9,7 @@ LOGFILE = timings.log
 EXAMPLES = 500000
 FEATURES = 10
 
-TRAINSET = trainset.$(EXAMPLES)-$(FEATURES).vw.gz
+TRAINSET = trainset.$(EXAMPLES)-$(FEATURES).vw
 
 #
 # Ensure apples-to-apples comparisons,
@@ -56,6 +56,9 @@ train timeone: $(TRAINSET) bin/elapsed-time
 	echo === benchmarking $(VWBASENAME) ...
 	TS="$$(date "$(TSFORMAT)")"
 	ELAPSED="$$(bin/elapsed-time $(VWCMD) 2>/dev/tty)"
+	if [[ ! -e $(LOGFILE) ]]; then
+	    printf 'DateTime\tUser\tSystem\tTime\tCpuPct\tCommand\n' >$(LOGFILE)
+	fi
 	printf "%s\t%s\t%s\n" "$$TS" "$$ELAPSED" "$(VWCMD)" >> $(LOGFILE)
 
 bench-all timeall:
