@@ -29,4 +29,4 @@ Benchmark &amp; chart vw runtime changes over time
 
 ## Example chart
 
-! [vw-timings-2020-11-26.png]
+![VW timings 2019-02 - 2020-11](vw-timings-2020-11-26.png)
