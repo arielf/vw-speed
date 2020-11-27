@@ -1,5 +1,10 @@
 timings.log
+timings-gzip.log
+
 trainset.*.vw.gz
 trainset.*.vw.gz.cache
+trainset.*.vw
+trainset.*.vw.cache
+
 vwver-boxplot.png
 z
