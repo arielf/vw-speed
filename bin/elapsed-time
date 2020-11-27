@@ -4,12 +4,17 @@
 #       cmd args...
 # As passed to this wrapper.
 #
-# Capture (user, system, overall) time it took to run & echo it to STDERR
-# with TAB separators
+# Example:
+#   elapsed-time some command ... >> some.log
+#
+# Capture (user, system, overall) time it took to run &
+# echo it to STDOUT with TAB separators
 #
 TIME_FORMAT="%Uu %Ss %e %P"
 
-# Make sure all needed pieces are in the buffer cache:
+#
+# Make sure all needed files are in the buffer cache:
+#
 for arg in "$@"; do
     if [[ -e "$arg" ]]; then
         cat "$arg" > /dev/null
@@ -18,9 +23,16 @@ for arg in "$@"; do
 done
 cat /usr/bin/time "$(which perl)" > /dev/null
 
-TIME=$TIME_FORMAT /usr/bin/time "$@" 2>&1 | perl -ne '
+#
+# Time the command & post-process the timing part so it can be logged
+#
+TIME=$TIME_FORMAT /usr/bin/time "$@" 2>&1 |
+# -- post-processing of timing-data
+perl -ne '
+    # so we can see what is going on (stderr is uncaptured)
     print STDERR $_;
     if (/^([\d.]+)u\s+([\d.]+)s\s+([\d.]+)\s+([\d.]+)/o) {
+        # timestamp, benchmark timing and full command captured+ logged
         print STDOUT "$1\t$2\t$3\t$4\n";
     }
 '
