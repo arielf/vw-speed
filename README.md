@@ -25,3 +25,8 @@ Benchmark &amp; chart vw runtime changes over time
     # Generate a chart from the timing logs
     #
     make chart
+
+
+## Example chart
+
+! [vw-timings-2020-11-26.png]
