@@ -10,18 +10,36 @@
 # Capture (user, system, overall) time it took to run &
 # echo it to STDOUT with TAB separators
 #
+set -au
+
+PROG="$(basename "$0")"
 TIME_FORMAT="%Uu %Ss %e %P"
+
+function usage() {
+    echo "Usage: $PROG command args..." >&2
+    exit 0
+}
+
+#
+# -- main
+#
+[[ -n "$*" ]] || usage
 
 #
 # Make sure all needed files are in the buffer cache:
 #
+cmd="$(command -v "$1")"
+if [[ -e "$cmd" ]]; then
+    cat "$cmd" > /dev/null
+    cp "$cmd" /dev/null
+fi
 for arg in "$@"; do
     if [[ -e "$arg" ]]; then
         cat "$arg" > /dev/null
         cp "$arg" /dev/null
     fi
 done
-cat /usr/bin/time "$(which perl)" > /dev/null
+cat /usr/bin/time "$(command -v perl)" > /dev/null
 
 #
 # Time the command & post-process the timing part so it can be logged

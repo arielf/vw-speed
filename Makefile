@@ -39,13 +39,18 @@ VWOPTS = --loss_function quantile \
 VWBASENAME = $$(basename $$(realpath $(VW)))
 VWCMD = $(VWBASENAME) $(VWOPTS) -d $(TRAINSET)
 
-.PRECIOUS: *.vw *.vw.gz *.log
+.PRECIOUS: *.vw *.vw.gz *.log *.png
 
 .ONESHELL:
 
-all: timeall
+.PHONY: trainset timeone timeall chart clean help
 
-trainset $(TRAINSET): bin/train-set
+all: trainset timeall chart
+
+trainset: 	#-- generate a VW training-set
+	 $(MAKE) $(TRAINSET)
+
+$(TRAINSET): bin/train-set
 	TMP_TRAINSET=trainset.vw
 	bin/train-set $(EXAMPLES) $(FEATURES) > $$TMP_TRAINSET
 	if [[ "$(TRAINSET)" =~ *.gz ]]; then
@@ -54,22 +59,27 @@ trainset $(TRAINSET): bin/train-set
 		mv -f $$TMP_TRAINSET $(TRAINSET)
 	fi
 
-train timeone: $(TRAINSET) bin/elapsed-time
+timeone:	#-- time one VW version
 	echo === benchmarking $(VWBASENAME) ...
 	TS="$$(date "$(TSFORMAT)")"
 	ELAPSED="$$(bin/elapsed-time $(VWCMD) 2>/dev/tty)"
 	if [[ ! -e $(LOGFILE) ]]; then
+	    # create file with header line
 	    printf 'DateTime\tUser\tSystem\tTime\tCpuPct\tCommand\n' >$(LOGFILE)
 	fi
 	printf "%s\t%s\t%s\n" "$$TS" "$$ELAPSED" "$(VWCMD)" >> $(LOGFILE)
 
-bench-all timeall:
+timeall:	#-- timing loop on all vw versions (log in $(LOGFILE)
 	for vwexe in $(VW_BINARIES); do
-		$(MAKE) VW="$$vwexe" VWOPTS="$(VWOPTS)" timeone
+	    $(MAKE) VW="$$vwexe" VWOPTS="$(VWOPTS)" timeone
 	done
 
-chart:
+chart:		#-- Generate time boxplot by vw version
 	bin/vwver-boxplot.R $(LOGFILE)
 
-clean:
+clean:		#-- clean *.cach files
 	rm *.cache
+
+help:		#-- give this help
+	@echo "Supported Makefile targets:"
+	@grep -- '[#]-- ' $(MAKEFILE_LIST)
