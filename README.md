@@ -50,4 +50,8 @@ The chart gets generated using `R/ggplot` from the `LOGFILE`.
 
 ## Example chart
 
-![VW timings 2019-02 - 2020-11](vw-timings-2020-11-26.png)
+<!--
+    -rw-r----- 1 ariel ariel 84125 Nov 26  2020 vw-timings-2020-11-26.png
+    -rw-r----- 1 ariel ariel 95739 Jan 10  2021 vwver-boxplot-2021-01-10.png
+-->
+![VW timings 2019-02 - 2023-02](Charts/vwver-boxplot-2023-02-12.png)
